@@ -59,7 +59,7 @@ if (cmd === "request") {
         }, null, 4))
     }
 
-    console.log(`Status code: ${result.status}`)
+    console.log(`Received response with status code ${result.status}`)
     console.log(`Response content: ${JSON.stringify(result.data, null, 4)}`)
 } else if (cmd === "listen") {
     const client = new HasagiClient();
