@@ -16,8 +16,8 @@
   "author": "dysolix",
   "license": "MIT",
   "dependencies": {
-    "@hasagi/core": "^0.2.1",
-    "@hasagi/schema": "^0.3.1",
+    "@hasagi/core": "^0.3.0",
+    "@hasagi/schema": "^0.4.0",
     "yargs": "^17.7.2"
   },
   "type": "module",
