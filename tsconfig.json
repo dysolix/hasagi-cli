@@ -18,5 +18,8 @@
     },
     "include": [
         "./bin/",
+    ],
+    "exclude": [
+        "./node_modules/*"
     ]
 }

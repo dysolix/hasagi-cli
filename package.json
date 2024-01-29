@@ -1,6 +1,6 @@
 {
   "name": "@hasagi/cli",
-  "version": "0.4.1",
+  "version": "0.8.10",
   "description": "This package provides the 'hasagi' command-line interface",
   "bin": {
     "hasagi": "bin/index.js"
@@ -8,7 +8,8 @@
   "main": "bin/index.js",
   "scripts": {
     "build": "tsc",
-    "pub": "npm run build && npm publish --access public"
+    "pub": "npm run build && npm publish --access public",
+    "update": "npm i @hasagi/core@latest @hasagi/schema@latest"
   },
   "keywords": [
     "hasagi"
@@ -16,8 +17,8 @@
   "author": "dysolix",
   "license": "MIT",
   "dependencies": {
-    "@hasagi/core": "^0.3.0",
-    "@hasagi/schema": "^0.4.0",
+    "@hasagi/core": "^0.4.5",
+    "@hasagi/schema": "^0.5.5",
     "yargs": "^17.7.2"
   },
   "type": "module",
