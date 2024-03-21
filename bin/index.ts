@@ -47,7 +47,7 @@ if (cmd === "request") {
     await client.connect();
 
     const method = (options.method as string).toUpperCase() as any;
-    const path = (options.path as string).toLowerCase();
+    const path = (options.path as string);
 
     const out = (options.out === undefined ? undefined : options.out !== "" ? options.out : "./") as string | undefined
     const isDirectory = out !== undefined ? await fs.stat(out as string).then(stat => stat.isDirectory(), () => false) : false;
