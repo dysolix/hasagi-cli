@@ -18,7 +18,7 @@
   "license": "MIT",
   "dependencies": {
     "@hasagi/core": "^0.4.10",
-    "@hasagi/schema": "^0.5.9",
+    "@hasagi/schema": "^0.6.0",
     "yargs": "^17.7.2"
   },
   "type": "module",
