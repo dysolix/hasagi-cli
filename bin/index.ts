@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 import yargs from "yargs"
-import { HasagiClient, RequestError } from "@hasagi/core"
+import { HasagiClient, LCUError, RequestError } from "@hasagi/core"
 import fs from "fs/promises";
 import _path from "path";
 import { getExtendedHelp, getSwagger, getTypeScript } from "@hasagi/schema";
@@ -49,6 +49,9 @@ if (cmd === "request") {
     const method = (options.method as string).toUpperCase() as any;
     const path = (options.path as string);
 
+    const body = typeof options.body === "string" ? JSON.parse(options.body) : undefined;
+    const query = typeof options.query === "string" ? JSON.parse(options.query) : undefined;
+
     const out = (options.out === undefined ? undefined : options.out !== "" ? options.out : "./") as string | undefined
     const isDirectory = out !== undefined ? await fs.stat(out as string).then(stat => stat.isDirectory(), () => false) : false;
 
@@ -56,29 +59,29 @@ if (cmd === "request") {
     const result = await client.request({
         method,
         url: path as any,
-        returnAxiosResponse: true
+        returnAxiosResponse: true,
+        data: body,
+        params: query
     }).then(res => ({
         statusCode: res.status,
         body: res.data
-    }), (err: RequestError) => err);
+    }), (err: RequestError | LCUError) => err);
 
     if (out) {
         await fs.writeFile(isDirectory ? _path.join(out, `${method}-${path.substring(1).replaceAll("/", "_")}-${Date.now()}.json`) : out, JSON.stringify(result, null, 4))
     }
 
-    if (result instanceof RequestError) {
-        if (result.lcuError) {
-            log(`Received response with non-success status code '${result.lcuError.httpStatus}'.`)
-            log(`Error code: '${result.lcuError.errorCode}'.`)
-            log(`Error message: '${result.lcuError.message}'`)
-            if (result.lcuError.implementationDetails)
-                log(`Additional details: ${JSON.stringify(result.lcuError.implementationDetails)}`);
-        } else {
-            log(result.message);
-        }
+    if (result instanceof LCUError) {
+        log(`Received response with non-success status code '${result.statusCode}'.`)
+        log(`Error code: '${result.errorCode}'.`)
+        log(`Error message: '${result.message}'`)
+        if (result.implementationDetails)
+            log(`Additional details: ${JSON.stringify(result.implementationDetails)}`);
+    } else if (result instanceof RequestError) {
+        log(`${result.errorCode ?? "RequestError"}: ${result.message ?? "An error occurred"}`)
     } else {
-        log(`Received response with status code ${result.statusCode}`)
-        log(`Response body: ${JSON.stringify(result.body, null, 4)}`)
+        log(`Received response with status code '${result.statusCode}'.`)
+        log(`Response: ${JSON.stringify(result.body, null, 4)}`)
     }
 } else if (cmd === "listen") {
     const client = new HasagiClient();
