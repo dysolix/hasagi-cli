@@ -1,6 +1,6 @@
 {
   "name": "@hasagi/cli",
-  "version": "0.9.1",
+  "version": "0.9.9",
   "description": "This package provides the 'hasagi' command-line interface",
   "bin": {
     "hasagi": "bin/index.js"
@@ -17,8 +17,8 @@
   "author": "dysolix",
   "license": "MIT",
   "dependencies": {
-    "@hasagi/core": "^0.5.12",
-    "@hasagi/schema": "^0.6.1",
+    "@hasagi/core": "^0.6.7",
+    "@hasagi/schema": "^0.6.8",
     "yargs": "^17.7.2"
   },
   "type": "module",
