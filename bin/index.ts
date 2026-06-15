@@ -33,6 +33,7 @@ const options = await yargs().scriptName("hasagi")
             .option("tsnamespace", { string: true })
             .option("swagger", { alias: "s", string: true })
             .option("raw", { alias: "r", string: true })
+            .option("index", { boolean: true, default: true, description: "Also emit an index.d.ts barrel re-exporting the generated types (use --no-index to disable)" })
     )
     .command("credentials", "prints the lcu port and auth token")
     .demandCommand()
@@ -140,6 +141,9 @@ if (cmd === "request") {
             await fs.writeFile(_path.join(out, "lcu-types.d.ts"), lcuTypes);
             await fs.writeFile(_path.join(out, "lcu-endpoints.d.ts"), lcuEndpoints);
             await fs.writeFile(_path.join(out, "lcu-events.d.ts"), lcuEvents);
+            // Barrel so the generated types can be imported by name from a single entry point (disable with --no-index).
+            if (options.index !== false)
+                await fs.writeFile(_path.join(out, "index.d.ts"), "export * from \"./lcu-types\";\nexport * from \"./lcu-endpoints\";\nexport * from \"./lcu-events\";\n");
         }
     }
 } else if (cmd === "credentials") {
