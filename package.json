@@ -9,6 +9,8 @@
   "scripts": {
     "build": "tsc",
     "check:package": "npm run build && publint",
+    "lint": "eslint",
+    "lint:fix": "eslint --fix",
     "pub": "npm run check:package && npm publish --access public",
     "update": "npm i @hasagi/core@latest @hasagi/schema@latest"
   },
@@ -24,10 +26,13 @@
   },
   "type": "module",
   "devDependencies": {
+    "@stylistic/eslint-plugin": "^5.10.0",
     "@types/node": "^20.19.43",
     "@types/yargs": "^17.0.24",
+    "eslint": "^10.5.0",
     "publint": "^0.3.21",
-    "typescript": "^6.0.3"
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.61.0"
   },
   "repository": {
     "type": "git",
