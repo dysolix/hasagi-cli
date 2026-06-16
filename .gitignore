@@ -1,2 +1,2 @@
-bin/*.js
+dist
 node_modules

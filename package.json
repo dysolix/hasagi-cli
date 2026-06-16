@@ -1,19 +1,19 @@
 {
   "name": "@hasagi/cli",
   "version": "0.9.9",
+  "private": true,
   "description": "This package provides the 'hasagi' command-line interface",
   "bin": {
     "hasagi": "bin/index.js"
   },
-  "main": "bin/index.js",
   "scripts": {
-    "build": "tsc",
-    "check:package": "npm run build && publint",
+    "build": "node scripts/prebuild.mjs && tsc && node scripts/postbuild.mjs",
+    "check:package": "npm run build && publint ./dist",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
     "test": "npm run test:typecheck && vitest run",
     "test:typecheck": "tsc -p tsconfig.test.json",
-    "pub": "npm run check:package && npm publish --access public",
+    "release": "npm run check:package && cd ./dist && npm publish --access public",
     "update": "npm i @hasagi/core@latest @hasagi/schema@latest"
   },
   "keywords": [
@@ -39,6 +39,6 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/dysolix/hasagi-cli.git"
+    "url": "git+https://github.com/dysolix/hasagi-cli.git"
   }
 }
