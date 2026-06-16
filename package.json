@@ -11,6 +11,8 @@
     "check:package": "npm run build && publint",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "test": "npm run test:typecheck && vitest run",
+    "test:typecheck": "tsc -p tsconfig.test.json",
     "pub": "npm run check:package && npm publish --access public",
     "update": "npm i @hasagi/core@latest @hasagi/schema@latest"
   },
@@ -32,7 +34,8 @@
     "eslint": "^10.5.0",
     "publint": "^0.3.21",
     "typescript": "^6.0.3",
-    "typescript-eslint": "^8.61.0"
+    "typescript-eslint": "^8.61.0",
+    "vitest": "^4.1.8"
   },
   "repository": {
     "type": "git",

@@ -5,6 +5,7 @@ import { HasagiClient, LCUError, RequestError } from "@hasagi/core";
 import fs from "fs/promises";
 import _path from "path";
 import { getExtendedHelp, getSwagger, getTypeScript } from "@hasagi/schema";
+import { resolveListenEventName, serializeRequestResult } from "./format.js";
 
 export const delay = (ms: number) => new Promise<void>(resolve => setTimeout(resolve, ms));
 function log(text: string) {
@@ -66,12 +67,7 @@ if (cmd === "request") {
   }), (err: RequestError | LCUError) => err);
 
   if (out) {
-    // Errors aren't enumerable, so JSON.stringify(error) would write "{}". Serialize their fields explicitly.
-    const fileContent = result instanceof LCUError
-      ? { error: "LCUError", statusCode: result.statusCode, errorCode: result.errorCode, message: result.message, implementationDetails: result.implementationDetails }
-      : result instanceof RequestError
-        ? { error: "RequestError", errorCode: result.errorCode, message: result.message }
-        : result;
+    const fileContent = serializeRequestResult(result);
     await fs.writeFile(isDirectory ? _path.join(out, `${method}-${path.substring(1).replaceAll("/", "_")}-${Date.now()}.json`) : out, JSON.stringify(fileContent, null, 4));
   }
 
@@ -100,9 +96,7 @@ if (cmd === "request") {
   const isDirectory = out !== undefined ? await fs.stat(out as string).then(stat => stat.isDirectory(), () => false) : false;
 
   client.addLCUEventListener({
-    // With neither name nor path, core subscribes to nothing; default to the OnJsonApiEvent
-    // catch-all so a bare `hasagi listen` actually receives events.
-    name: name ?? (path ? undefined : "OnJsonApiEvent"),
+    name: resolveListenEventName(name, path),
     path,
     types,
     callback: async (event) => {
