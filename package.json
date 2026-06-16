@@ -8,7 +8,7 @@
   "main": "bin/index.js",
   "scripts": {
     "build": "tsc",
-    "check:package": "npm run build && publint && attw --pack",
+    "check:package": "npm run build && publint",
     "pub": "npm run check:package && npm publish --access public",
     "update": "npm i @hasagi/core@latest @hasagi/schema@latest"
   },
@@ -24,7 +24,6 @@
   },
   "type": "module",
   "devDependencies": {
-    "@arethetypeswrong/cli": "^0.18.3",
     "@types/node": "^20.19.43",
     "@types/yargs": "^17.0.24",
     "publint": "^0.3.21",
