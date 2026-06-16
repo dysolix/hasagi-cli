@@ -1,20 +1,32 @@
 import { describe, it, expect } from "vitest";
+import { createRequire } from "node:module";
 import { LCUError, RequestError } from "@hasagi/core";
 import { resolveListenEventName, serializeRequestResult } from "../../bin/format.js";
 
-// Build genuine LCUError/RequestError instances without driving the (axios-gated) constructors, so
-// the test exercises serializeRequestResult's `instanceof` branching independent of axios internals.
-function lcuError(fields: { statusCode: number; errorCode: string | null; message: string; implementationDetails: unknown }): LCUError {
-  return Object.assign(Object.create(LCUError.prototype), fields);
+// axios ships separate ESM and CJS builds, each with its own AxiosError class (a dual-package
+// hazard). @hasagi/core is CJS and requires the CJS axios, so its `instanceof AxiosError` checks
+// only recognize CJS-built errors. A plain `import ... from "axios"` here would give vitest the ESM
+// AxiosError and silently fail those checks — so we require axios the same (CJS) way core does,
+// guaranteeing one shared AxiosError identity and letting the real error constructors run.
+const { AxiosError } = createRequire(import.meta.url)("axios") as typeof import("axios");
+
+function lcuError(status: number, data: { errorCode: string; message: string; implementationDetails: unknown }): LCUError {
+  return new LCUError(new AxiosError(`Request failed with status code ${status}`, "ERR_BAD_RESPONSE", {} as any, {}, {
+    status,
+    data,
+    statusText: "",
+    headers: {} as any,
+    config: {} as any,
+  }));
 }
 
-function requestError(fields: { errorCode: string | undefined; message: string }): RequestError {
-  return Object.assign(Object.create(RequestError.prototype), fields);
+function requestError(code: string): RequestError {
+  return new RequestError(new AxiosError(`connect ${code}`, code, {} as any, {}));
 }
 
 describe("serializeRequestResult", () => {
   it("serializes an LCUError into its enumerable fields (not '{}')", () => {
-    const result = serializeRequestResult(lcuError({ statusCode: 404, errorCode: "RPC_ERROR", message: "not found", implementationDetails: { foo: 1 } }));
+    const result = serializeRequestResult(lcuError(404, { errorCode: "RPC_ERROR", message: "not found", implementationDetails: { foo: 1 } }));
 
     expect(result).toMatchObject({
       error: "LCUError",
@@ -30,7 +42,7 @@ describe("serializeRequestResult", () => {
   });
 
   it("serializes a RequestError into error/errorCode/message", () => {
-    const result = serializeRequestResult(requestError({ errorCode: "ECONNREFUSED", message: "Can't reach League of Legends client (ECONNREFUSED)." }));
+    const result = serializeRequestResult(requestError("ECONNREFUSED"));
 
     expect(result).toMatchObject({ error: "RequestError", errorCode: "ECONNREFUSED" });
     expect((result as { message: string }).message).toBeTruthy();
