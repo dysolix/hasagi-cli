@@ -8,7 +8,8 @@
   "main": "bin/index.js",
   "scripts": {
     "build": "tsc",
-    "pub": "npm run build && npm publish --access public",
+    "check:package": "npm run build && publint && attw --pack",
+    "pub": "npm run check:package && npm publish --access public",
     "update": "npm i @hasagi/core@latest @hasagi/schema@latest"
   },
   "keywords": [
@@ -23,8 +24,10 @@
   },
   "type": "module",
   "devDependencies": {
+    "@arethetypeswrong/cli": "^0.18.3",
     "@types/node": "^20.19.43",
     "@types/yargs": "^17.0.24",
+    "publint": "^0.3.21",
     "typescript": "^6.0.3"
   },
   "repository": {
