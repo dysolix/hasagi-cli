@@ -142,8 +142,9 @@ if (cmd === "request") {
             await fs.writeFile(_path.join(out, "lcu-endpoints.d.ts"), lcuEndpoints);
             await fs.writeFile(_path.join(out, "lcu-events.d.ts"), lcuEvents);
             // Barrel so the generated types can be imported by name from a single entry point (disable with --no-index).
+            // The `LCUTypes` namespace re-export preserves backwards compatibility with older @hasagi/types versions.
             if (options.index !== false)
-                await fs.writeFile(_path.join(out, "index.d.ts"), "export * from \"./lcu-types\";\nexport * from \"./lcu-endpoints\";\nexport * from \"./lcu-events\";\n");
+                await fs.writeFile(_path.join(out, "index.d.ts"), "export * from \"./lcu-types\";\nexport * from \"./lcu-endpoints\";\nexport * from \"./lcu-events\";\nexport * as LCUTypes from \"./lcu-types\";\n");
         }
     }
 } else if (cmd === "credentials") {
