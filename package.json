@@ -1,6 +1,6 @@
 {
   "name": "@hasagi/cli",
-  "version": "0.9.9",
+  "version": "0.9.10",
   "private": true,
   "description": "This package provides the 'hasagi' command-line interface",
   "bin": {
